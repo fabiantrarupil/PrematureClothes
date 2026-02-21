@@ -1,0 +1,288 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Marketplace Ropa Bebés Prematuros",
+    "description": "Documentación técnica del Hito 1 - Sistema de gestión de productos y usuarios para el proyecto Tahiel.",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://virtserver.swaggerhub.com/ftwebdeveloper/MarketplaceRopaBebesPrematuros/1.0.0",
+      "description": "SwaggerHub API Auto Mocking"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/usuarios": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Registro de nuevo usuario",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Usuario"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Usuario registrado exitosamente."
+          }
+        }
+      }
+    },
+    "/login": {
+      "post": {
+        "tags": [
+          "Autenticación"
+        ],
+        "summary": "Inicio de sesión (Acceso)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/login_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Retorna token JWT y datos de usuario."
+          }
+        }
+      }
+    },
+    "/productos": {
+      "get": {
+        "tags": [
+          "Marketplace"
+        ],
+        "summary": "Listado de todos los productos",
+        "responses": {
+          "200": {
+            "description": "Lista de productos obtenida con éxito."
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Marketplace"
+        ],
+        "summary": "Crear Publicación (Privado)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Producto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Publicación creada."
+          }
+        }
+      }
+    },
+    "/productos/{id}": {
+      "get": {
+        "tags": [
+          "Marketplace"
+        ],
+        "summary": "Detalle de un producto específico",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Detalle del producto con sus comentarios."
+          }
+        }
+      }
+    },
+    "/categorias": {
+      "get": {
+        "tags": [
+          "Marketplace"
+        ],
+        "summary": "Listado de categorías",
+        "responses": {
+          "200": {
+            "description": "Lista para filtros y formularios."
+          }
+        }
+      }
+    },
+    "/favoritos": {
+      "post": {
+        "tags": [
+          "Interacción"
+        ],
+        "summary": "Registrar favorito (Privado)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/favoritos_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Favorito registrado."
+          }
+        }
+      }
+    },
+    "/comentarios": {
+      "post": {
+        "tags": [
+          "Interacción"
+        ],
+        "summary": "Insertar reseña técnica (Privado)",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/comentarios_body"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Comentario guardado."
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Usuario": {
+        "type": "object",
+        "properties": {
+          "nombre_completo": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          },
+          "direccion_envio": {
+            "type": "string"
+          },
+          "rol": {
+            "type": "string"
+          }
+        }
+      },
+      "Producto": {
+        "type": "object",
+        "properties": {
+          "vendedor_id": {
+            "type": "integer"
+          },
+          "categorias_id": {
+            "type": "integer"
+          },
+          "titulo": {
+            "type": "string"
+          },
+          "descripción": {
+            "type": "string"
+          },
+          "precio": {
+            "type": "integer"
+          },
+          "talla_rango": {
+            "type": "string"
+          },
+          "material": {
+            "type": "string"
+          },
+          "stock": {
+            "type": "integer"
+          },
+          "estado_prenda": {
+            "type": "string"
+          },
+          "img_url": {
+            "type": "string"
+          }
+        }
+      },
+      "login_body": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "favoritos_body": {
+        "type": "object",
+        "properties": {
+          "usuario_id": {
+            "type": "integer"
+          },
+          "producto_id": {
+            "type": "integer"
+          }
+        }
+      },
+      "comentarios_body": {
+        "type": "object",
+        "properties": {
+          "producto_id": {
+            "type": "integer"
+          },
+          "usuario_id": {
+            "type": "integer"
+          },
+          "comentario": {
+            "type": "string"
+          },
+          "calificacion": {
+            "type": "integer"
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    }
+  }
+}

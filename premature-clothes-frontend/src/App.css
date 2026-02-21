@@ -1,0 +1,101 @@
+/* Reset de Vite para asegurar compatibilidad total con Bootstrap */
+#root {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+}
+
+:root {
+  --sweet-pink: #ff8fab;     /* Rosa principal (Logo y botones) */
+  --soft-blue: #e2f1f8;      /* Azul muy suave (Banners/Fondos) */
+  --noche-profunda: #0f172a; /* Azul noche (Sidebars y títulos) */
+  --sky-highlight: #38bdf8;  /* Azul brillante (Activos/Links) */
+  --warm-gray: #64748b;      /* Gris para textos secundarios */
+  --body-bg: #f8fafc;        /* Fondo general de la app */
+}
+
+body {
+  background-color: var(--body-bg);
+  font-family: 'Inter', -apple-system, sans-serif; /* Consistente con bocetos */
+}
+
+/* Estilo para el Hero del Home */
+.home-hero {
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, var(--soft-blue) 0%, #ffffff 100%);
+  margin-top: -20px;
+}
+
+.navbar {
+  backdrop-filter: blur(10px);
+  background-color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05) !important;
+}
+
+.navbar-brand {
+  color: var(--sweet-pink) !important;
+  font-weight: bold;
+  font-size: 24px;
+}
+
+.nav-link {
+  font-weight: 500;
+  color: var(--warm-gray) !important;
+  transition: color 0.2s ease;
+}
+
+.nav-link:hover, .hover-link:hover {
+  color: var(--sweet-pink) !important;
+}
+
+/* 📦 TARJETAS DE PRODUCTO (Optimización QA) */
+.card-hover {
+  border: none !important;
+  border-radius: 15px !important;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: white;
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(255, 133, 162, 0.15) !important; /* Sombra sutil color rosa */
+}
+
+.product-img {
+  transition: transform 0.3s ease;
+  object-fit: cover;
+}
+
+.card-hover:hover .product-img {
+  transform: scale(1.08);
+}
+
+/* 🏷️ BOTONES CON IDENTIDAD */
+.btn-premature {
+  background-color: var(--sweet-pink);
+  color: white;
+  border-radius: 10px;
+  font-weight: 600;
+  border: none;
+  padding: 10px 20px;
+  transition: opacity 0.2s;
+}
+
+.btn-premature:hover {
+  opacity: 0.9;
+  color: white;
+}
+
+/* 📝 UTILITARIOS DE TEXTO */
+.text-truncate {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
