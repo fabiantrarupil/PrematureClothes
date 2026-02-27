@@ -5,21 +5,30 @@ const jwt = require('jsonwebtoken'); // 👈 IMPORTANTE: Añade esta línea
 // 1. REGISTRO
 const registrarUsuario = async (req, res) => {
     try {
-        const { nombre_completo, email, password, direccion_envio, rol } = req.body; 
+        const { nombre_completo, email, password, direccion_envio, rol } = req.body;
+
+        // Validación básica preventiva (Mindset QA)
+        if (!email || !password || !nombre_completo) {
+            return res.status(400).json({ ok: false, msg: "Faltan campos obligatorios" });
+        }
+
         const salt = await bcrypt.genSalt(10);
         const passwordEncriptada = await bcrypt.hash(password, salt);
 
+        // 🎯 FIX: Añadimos "::rol_usuario" para forzar el tipo de dato correcto
         const consulta = `
             INSERT INTO usuarios (nombre_completo, email, password, direccion_envio, rol, activo) 
-            VALUES ($1, $2, $3, $4, $5, true) 
+            VALUES ($1, $2, $3, $4, $5::rol_usuario, true) 
             RETURNING id, nombre_completo, email, rol`;
-            
-        const valores = [nombre_completo, email, passwordEncriptada, direccion_envio, rol];
+
+        const valores = [nombre_completo, email, passwordEncriptada, direccion_envio, rol || 'comprador'];
+
         const { rows } = await pool.query(consulta, valores);
-        
+
         res.status(201).json({ ok: true, usuario: rows[0] });
     } catch (error) {
         console.error("❌ ERROR EN REGISTRO:", error.message);
+        // Enviamos el mensaje real para que en el Frontend sepas qué falló
         res.status(500).json({ ok: false, msg: error.message });
     }
 };
@@ -46,17 +55,17 @@ const loginUsuario = async (req, res) => {
         // 🔑 GENERACIÓN DEL TOKEN
         // Usamos una clave secreta (en producción usa variables de entorno)
         const token = jwt.sign(
-            { id: usuario.id, email: usuario.email }, 
-            "CLAVE_SECRETA_ULTRA_SEGURA", 
+            { id: usuario.id, email: usuario.email },
+            "CLAVE_SECRETA_ULTRA_SEGURA",
             { expiresIn: '24h' }
         );
 
-        delete usuario.password; 
+        delete usuario.password;
 
         // 🚀 RESPUESTA CONSOLIDADA: Enviamos el usuario Y el token
-        res.status(200).json({ 
-            ok: true, 
-            usuario, 
+        res.status(200).json({
+            ok: true,
+            usuario,
             token // 👈 Esto es lo que le faltaba a tu frontend
         });
 
