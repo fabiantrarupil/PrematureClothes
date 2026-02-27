@@ -13,7 +13,7 @@ const Auth = ({ inicialEsLogin }) => {
     email: '',
     password: '',
     direccion_envio: '',
-    rol: 'cliente' // Por defecto
+    rol: 'comprador' // Por defecto
   });
 
   const handleChange = (e) => {
@@ -115,7 +115,7 @@ const Auth = ({ inicialEsLogin }) => {
                   <Form.Group className="mb-3">
                     <Form.Label className="small fw-bold">Tipo de Usuario</Form.Label>
                     <Form.Select name="rol" onChange={handleChange} value={usuario.rol}>
-                      <option value="cliente">Quiero comprar (Cliente)</option>
+                      <option value="comprador">Quiero comprar (Cliente)</option>
                       <option value="vendedor">Quiero vender (Vendedor)</option>
                       <option value="admin">Administrador 🛠️</option>
                     </Form.Select>
