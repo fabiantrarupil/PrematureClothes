@@ -38,7 +38,7 @@ const CarritoCompras = () => {
     try {
       console.log(`Iniciando compra para usuario con rol: ${userRole}`);
 
-      const response = await fetch('http://localhost:3000/api/pedidos/checkout', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -23,7 +23,7 @@ const Auth = ({ inicialEsLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const endpoint = esLogin ? '/usuarios/login' : '/usuarios/register';
-    const urlBase = "http://localhost:3000";
+    const urlBase = import.meta.env.VITE_API_URL;
 
     const payload = esLogin
       ? { email: usuario.email, password: usuario.password }

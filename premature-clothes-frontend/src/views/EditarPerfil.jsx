@@ -20,7 +20,7 @@ const EditarPerfil = () => {
 const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const response = await fetch(`http://localhost:3000/usuarios/${user.id}`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/usuarios/${user.id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(formData)

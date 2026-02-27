@@ -17,7 +17,7 @@ const GestionPedidos = () => {
     setLoading(true);
     try {
       const token = user?.token || localStorage.getItem('token');
-      const response = await fetch('http://localhost:3000/api/pedidos/admin', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos/admin`, {
         headers: { 
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
