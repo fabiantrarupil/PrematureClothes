@@ -25,17 +25,17 @@ const crearProducto = async (req, res) => {
     // 🔍 Ajustamos para incluir 'descripcion' e 'imagen_url'
     const { 
         vendedor_id, categoria_id, titulo, descripcion, 
-        precio, stock, imagen_url, talla_rango, estado_prenda 
+        precio, stock, imagen, talla_rango, estado_prenda 
     } = req.body;
 
     try {
         const query = `
             INSERT INTO productos 
-            (vendedor_id, categoria_id, titulo, descripcion, precio, stock, imagen_url, talla_rango, estado_prenda, activo) 
+            (vendedor_id, categoria_id, titulo, descripcion, precio, stock, imagen, talla_rango, estado_prenda, activo) 
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, true) 
             RETURNING *`;
             
-        const valores = [vendedor_id, categoria_id, titulo, descripcion, precio, stock, imagen_url, talla_rango, estado_prenda];
+        const valores = [vendedor_id, categoria_id, titulo, descripcion, precio, stock, imagen, talla_rango, estado_prenda];
         const { rows } = await pool.query(query, valores);
         
         res.status(201).json({ ok: true, producto: rows[0] });
