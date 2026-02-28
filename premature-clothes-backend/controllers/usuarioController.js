@@ -123,4 +123,49 @@ const actualizarPerfil = async (req, res) => {
     }
 };
 
-module.exports = { registrarUsuario, loginUsuario, actualizarPerfil };
+// 4. OBTENER TODOS LOS USUARIOS (Solo para Admin)
+const obtenerUsuarios = async (req, res) => {
+    try {
+        // QA Check: Traemos datos necesarios, nunca la password
+        const consulta = "SELECT id, nombre_completo, email, rol, direccion_envio, activo FROM usuarios ORDER BY id ASC";
+        const { rows } = await pool.query(consulta);
+        
+        res.status(200).json(rows);
+    } catch (error) {
+        console.error("❌ ERROR AL OBTENER USUARIOS:", error.message);
+        res.status(500).json({ ok: false, msg: "Error al obtener la lista de usuarios" });
+    }
+};
+
+// 5. ACTUALIZAR ROL DE USUARIO (Solo para Admin)
+const actualizarRol = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { rol } = req.body;
+
+        const consulta = `
+            UPDATE usuarios 
+            SET rol = $1::rol_usuario, updated_at = CURRENT_TIMESTAMP 
+            WHERE id = $2 
+            RETURNING id, nombre_completo, rol`;
+
+        const { rows } = await pool.query(consulta, [rol, id]);
+
+        if (rows.length === 0) {
+            return res.status(404).json({ ok: false, msg: "Usuario no encontrado" });
+        }
+
+        res.json({ ok: true, usuario: rows[0], msg: "Rol actualizado correctamente" });
+    } catch (error) {
+        console.error("❌ ERROR AL ACTUALIZAR ROL:", error.message);
+        res.status(500).json({ ok: false, msg: "Error al actualizar el rol" });
+    }
+};
+
+module.exports = { 
+    registrarUsuario, 
+    loginUsuario, 
+    actualizarPerfil, 
+    obtenerUsuarios, 
+    actualizarRol 
+};
