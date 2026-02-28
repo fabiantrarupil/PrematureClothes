@@ -4,7 +4,6 @@ import { getProductos, toggleFavoritoDB } from "../services/ProductService";
 export const ProductContext = createContext();
 
 export const ProductProvider = ({ children }) => {
-  // 1. Cargamos el usuario del localStorage
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
@@ -14,7 +13,6 @@ export const ProductProvider = ({ children }) => {
   const [carrito, setCarrito] = useState(() => JSON.parse(localStorage.getItem("carrito")) || []);
   const [favoritos, setFavoritos] = useState(() => JSON.parse(localStorage.getItem("favoritos")) || []);
 
-  // Sincronización automática con LocalStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem("user", JSON.stringify(user));
@@ -28,32 +26,30 @@ export const ProductProvider = ({ children }) => {
     localStorage.setItem("favoritos", JSON.stringify(favoritos));
   }, [carrito, favoritos]);
 
-  // Carga inicial de productos
   useEffect(() => {
     const cargar = async () => {
-      const data = await getProductos();
-      setProductos(data);
+      try {
+        const data = await getProductos();
+        setProductos(data || []);
+      } catch (error) {
+        console.error("❌ Error en carga inicial:", error);
+      }
     };
     cargar();
   }, []);
 
-  // 3. FUNCIÓN DE FAVORITOS (Corregida para evitar ReferenceError)
   const toggleFavorito = async (producto) => {
-    const token = user?.token;
+    const token = user?.token || localStorage.getItem('token');
 
     if (!token) {
       alert("Por favor, inicia sesión para guardar tus favoritos ❤️");
       return;
     }
 
-    // QA FIX: Extraemos el ID del objeto producto de forma segura
     const idProd = producto.producto_id || producto.id_producto || producto.id;
 
     try {
-      // 🚀 Llamamos al servicio con el ID normalizado
       await toggleFavoritoDB(idProd, token);
-
-      // Si el servidor responde OK, actualizamos el estado local
       setFavoritos((prev) => {
         const existe = prev.find((p) => (p.producto_id || p.id_producto || p.id) === idProd);
         if (existe) {
@@ -61,14 +57,11 @@ export const ProductProvider = ({ children }) => {
         }
         return [...prev, producto];
       });
-      
     } catch (error) {
       console.error("Error al guardar favorito:", error);
-      alert("No se pudo sincronizar el favorito con la base de datos.");
     }
   };
 
-  // Funciones de Carrito
   const agregarAlCarrito = (producto) => {
     const idProd = producto.producto_id || producto.id_producto || producto.id;
     setCarrito((prev) => {
@@ -88,7 +81,8 @@ export const ProductProvider = ({ children }) => {
 
   const eliminarDelCarrito = (id) => setCarrito((prev) => prev.filter((p) => (p.producto_id || p.id_producto || p.id) !== id));
   
-  const totalCarrito = carrito.reduce((acc, p) => acc + (Number(p.precio) * (p.cantidad || 1)), 0);
+  const totalCarrito = carrito.reduce((acc, p) => acc + (Number(p.precio || 0) * (p.cantidad || 1)), 0);
+  const cantidadTotalItems = carrito.reduce((acc, p) => acc + (p.cantidad || 0), 0);
 
   const logout = () => {
     setUser(null);
@@ -99,7 +93,7 @@ export const ProductProvider = ({ children }) => {
 
   return (
     <ProductContext.Provider value={{
-      productos, user, setUser, carrito, favoritos, totalCarrito,
+      productos, user, setUser, carrito, favoritos, totalCarrito, cantidadTotalItems,
       agregarAlCarrito, eliminarDelCarrito, ajustarCantidad, toggleFavorito, logout
     }}>
       {children}

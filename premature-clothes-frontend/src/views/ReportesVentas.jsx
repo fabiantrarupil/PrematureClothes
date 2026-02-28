@@ -10,7 +10,6 @@ const ReportesVentas = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // 🔍 QA Check: Coherencia con el ENUM de tu DB ('administrador')
   const esAdmin = user?.rol === 'administrador';
 
   useEffect(() => {
@@ -22,20 +21,20 @@ const ReportesVentas = () => {
   const fetchDataReportes = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem('token');
-      // Usamos el endpoint de pedidos para generar el reporte
+      const token = user?.token || localStorage.getItem('token');
+      
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos`, {
-        headers: { 'Authorization': `Bearer ${token}` }
+        headers: { 
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
       });
 
-      if (!response.ok) throw new Error('Error al cargar reportes');
+      if (!response.ok) throw new Error('No se pudieron cargar los pedidos');
       const pedidos = await response.json();
 
-      // Lógica para transformar pedidos en estadísticas
       const totalVentas = pedidos.reduce((acc, p) => acc + Number(p.total || 0), 0);
-      const pedidosNuevos = pedidos.filter(p => p.estado === 'creado' || p.estado === 'pagado').length;
-      
-      // Obtener clientes únicos (QA: Usamos un Set para no repetir)
+      const pedidosNuevos = pedidos.filter(p => p.estado === 'pendiente' || p.estado === 'pagado').length;
       const clientesUnicos = new Set(pedidos.map(p => p.usuario_id)).size;
 
       setReportes({
@@ -44,7 +43,7 @@ const ReportesVentas = () => {
           { titulo: "Pedidos Nuevos", valor: pedidosNuevos.toString(), color: "#6c757d", icon: <ShoppingBag /> },
           { titulo: "Clientes Activos", valor: clientesUnicos.toString(), color: "#ff85a2", icon: <Users /> }
         ],
-        transacciones: pedidos.slice(0, 10) // Últimas 10 transacciones
+        transacciones: pedidos.slice(0, 10)
       });
     } catch (err) {
       setError(err.message);
@@ -70,7 +69,7 @@ const ReportesVentas = () => {
         <h2 className="fw-bold" style={{ color: '#ff85a2' }}>
           Reportes Administrativos <Calendar className="ms-2" />
         </h2>
-        <p className="text-muted">Análisis de rendimiento real basado en transacciones.</p>
+        <p className="text-muted">Análisis de rendimiento basado en transacciones reales.</p>
       </div>
       
       {error && <Alert variant="danger">{error}</Alert>}
@@ -106,7 +105,7 @@ const ReportesVentas = () => {
                 reportes.transacciones.map((t) => (
                   <tr key={t.id}>
                     <td className="ps-4 fw-bold text-muted">#{t.id}</td>
-                    <td>{new Date(t.created_at || t.fecha).toLocaleDateString()}</td>
+                    <td>{new Date(t.fecha).toLocaleDateString()}</td>
                     <td>
                       <Badge bg={t.estado === 'entregado' ? 'success' : 'warning'} className="fw-normal">
                         {t.estado}
@@ -119,7 +118,7 @@ const ReportesVentas = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="4" className="text-center py-4 text-muted">No hay transacciones registradas aún.</td>
+                  <td colSpan="4" className="text-center py-4 text-muted">No hay transacciones registradas.</td>
                 </tr>
               )}
             </tbody>
