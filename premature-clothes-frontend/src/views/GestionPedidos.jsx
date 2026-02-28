@@ -10,7 +10,7 @@ const GestionPedidos = () => {
   const [error, setError] = useState(null);
 
   // 🔍 QA Check: Validación de Admin robusta (soporta español e inglés)
-  const isAdmin = user?.rol === 'admin' || user?.role === 'admin';
+  const isAdmin = user?.rol === 'administrador';
 
   // Función para obtener los pedidos reales de la DB
   const fetchPedidos = async () => {
