@@ -6,7 +6,7 @@ const {
     actualizarPerfil, 
     obtenerUsuarios, 
     actualizarRol 
-} = require('../controllers/usuariosController');
+} = require('../controllers/usuarioController');
 
 router.post('/register', registrarUsuario);
 router.post('/login', loginUsuario);
