@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Row, Col, Card, Table, Spinner, Alert } from 'react-bootstrap';
+import { Container, Row, Col, Card, Table, Spinner, Alert, Badge } from 'react-bootstrap'; 
 import { ProductContext } from '../context/ProductContext';
 import { Navigate } from 'react-router-dom';
 import { TrendingUp, ShoppingBag, Users, Calendar } from 'lucide-react';
