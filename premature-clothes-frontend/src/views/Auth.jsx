@@ -117,7 +117,6 @@ const Auth = ({ inicialEsLogin }) => {
                     <Form.Select name="rol" onChange={handleChange} value={usuario.rol}>
                       <option value="comprador">Quiero comprar (Cliente)</option>
                       <option value="vendedor">Quiero vender (Vendedor)</option>
-                      <option value="admin">Administrador 🛠️</option>
                     </Form.Select>
                   </Form.Group>
                 </>

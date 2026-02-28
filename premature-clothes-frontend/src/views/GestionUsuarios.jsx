@@ -4,7 +4,7 @@ import { UserCog, ShieldCheck, UserMinus, Mail } from 'lucide-react';
 const GestionUsuarios = () => {
   // Simulamos una lista de usuarios registrados
   const usuarios = [
-    { id: 1, nombre: 'Francisco Mapuche', email: 'f.mapuche@email.com', rol: 'Administrador', estado: 'Activo' },
+    { id: 1, nombre: 'Francisco Rojas', email: 'f.rojas@email.com', rol: 'Administrador', estado: 'Activo' },
     { id: 2, nombre: 'María Loreto', email: 'm.loreto@email.com', rol: 'Vendedor', estado: 'Activo' },
     { id: 3, nombre: 'Camilo Guerrero', email: 'c.guerrero@email.com', rol: 'Usuario', estado: 'Inactivo' },
   ];
