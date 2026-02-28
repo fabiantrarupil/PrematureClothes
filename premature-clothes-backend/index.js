@@ -22,10 +22,13 @@ app.use(express.json()); // Necesario para que req.body no sea undefined
 app.get('/', (req, res) => {
     res.send('Servidor de PrematureClothes funcionando correctamente 🚀');
 });
+app.get('/api/test-usuarios', (req, res) => {
+    res.json({ msg: "Si ves esto, el prefijo /api funciona" });
+});
 
 // Montaje de rutas con prefijos claros (API REST)
-app.use('/productos', productRoutes);
-app.use('/usuarios', usuarioRoutes);
+app.use('/api/productos', productRoutes);
+app.use('/api/usuarios', usuarioRoutes); // <-- CAMBIA ESTO (Antes era solo /usuarios)
 app.use('/api/favoritos', favoritosRoutes);
 app.use('/api/pedidos', pedidosRoutes);
 
