@@ -16,9 +16,10 @@ const Navigation = () => {
     navigate('/login');
   };
 
-  // QA FIX: Aseguramos que detecte 'admin' correctamente (ajusta a .rol si usas español en la DB)
-  const isAdmin = user?.rol === 'admin' || user?.role === 'admin';
-  const isVendedor = user?.rol === 'vendedor' || user?.role === 'vendedor' || isAdmin;
+  // 🔍 QA Check: Normalización de roles (DB usa 'administrador', Frontend usaba 'admin')
+  const isAdmin = user?.rol === 'administrador';
+  const isVendedor = user?.rol === 'vendedor';
+  const isComprador = user?.rol === 'comprador';
 
   return (
     <Navbar bg="white" expand="lg" className="shadow-sm fixed-top py-3" collapseOnSelect>
@@ -31,22 +32,27 @@ const Navigation = () => {
 
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="me-auto">
+            {/* Acceso para todos */}
             <Nav.Link as={NavLink} to="/catalogo">Catálogo</Nav.Link>
 
-            {user && (
-              <>
-                <Nav.Link as={NavLink} to="/favoritos">
-                  <Heart size={18} className="me-1" /> Favoritos
-                </Nav.Link>
-                <Nav.Link as={NavLink} to="/publicar" className="text-primary fw-bold">
-                  <PlusCircle size={18} className="me-1" /> Vender
-                </Nav.Link>
-              </>
+            {/* Solo Compradores ven Favoritos */}
+            {user && isComprador && (
+              <Nav.Link as={NavLink} to="/favoritos">
+                <Heart size={18} className="me-1" /> Favoritos
+              </Nav.Link>
+            )}
+
+            {/* Solo Vendedores ven el botón directo de Vender */}
+            {user && isVendedor && (
+              <Nav.Link as={NavLink} to="/publicar" className="text-primary fw-bold">
+                <PlusCircle size={18} className="me-1" /> Vender
+              </Nav.Link>
             )}
           </Nav>
 
           <Nav className="align-items-center">
-            {user && (
+            {/* El carrito solo es visible para Compradores */}
+            {user && isComprador && (
               <Nav.Link as={NavLink} to="/carrito" className="me-lg-3 position-relative">
                 <ShoppingCart size={24} />
                 {cantidadTotalItems > 0 && (
@@ -74,44 +80,52 @@ const Navigation = () => {
                 title={
                   <span>
                     {isAdmin ? <ShieldCheck size={20} className="me-1 text-danger" /> : <User size={20} className="me-1" />}
-                    {user.nombre_completo || user.nombre || 'Mi Cuenta'}
+                    {user.nombre_completo || 'Mi Cuenta'}
                   </span>
                 }
                 id="user-dropdown"
                 align="end"
                 className="ms-lg-3 fw-bold"
               >
-                <NavDropdown.Header>Mi Actividad</NavDropdown.Header>
+                <NavDropdown.Header>Perfil: {user.rol?.toUpperCase()}</NavDropdown.Header>
                 <NavDropdown.Item as={NavLink} to="/profile">Mi Perfil</NavDropdown.Item>
-                <NavDropdown.Item as={NavLink} to="/pedidos">Mis Compras</NavDropdown.Item>
-                <NavDropdown.Item as={NavLink} to="/mis-publicaciones">Mis Publicaciones</NavDropdown.Item>
                 <NavDropdown.Item as={NavLink} to="/mensajes">
                   <MessageSquare size={16} className="me-2" /> Mensajes
                 </NavDropdown.Item>
 
-                {isVendedor && !isAdmin && (
+                {/* Vistas específicas de COMPRADOR */}
+                {isComprador && (
+                  <>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item as={NavLink} to="/pedidos">Mis Compras</NavDropdown.Item>
+                  </>
+                )}
+
+                {/* Vistas específicas de VENDEDOR */}
+                {isVendedor && (
                   <>
                     <NavDropdown.Divider />
                     <NavDropdown.Header>Panel Vendedor</NavDropdown.Header>
+                    <NavDropdown.Item as={NavLink} to="/mis-publicaciones">Mis Productos</NavDropdown.Item>
                     <NavDropdown.Item as={NavLink} to="/vendedor/estadisticas">
-                      <BarChart3 size={16} className="me-2" /> Mis Estadísticas
+                      <BarChart3 size={16} className="me-2" /> Estadísticas
                     </NavDropdown.Item>
                   </>
                 )}
 
-                {/* 🎯 SECCIÓN EXCLUSIVA ADMINISTRADOR */}
+                {/* Vistas exclusivas de ADMINISTRADOR */}
                 {isAdmin && (
                   <>
                     <NavDropdown.Divider />
-                    <NavDropdown.Header className="text-danger fw-bold">ADMINISTRACIÓN</NavDropdown.Header>
+                    <NavDropdown.Header className="text-danger fw-bold">SISTEMA ADMIN</NavDropdown.Header>
                     <NavDropdown.Item as={NavLink} to="/admin/pedidos">
-                      <ClipboardList size={16} className="me-2" /> Gestionar Pedidos
+                      <ClipboardList size={16} className="me-2" /> Todos los Pedidos
                     </NavDropdown.Item>
                     <NavDropdown.Item as={NavLink} to="/admin/usuarios">
-                      <Users size={16} className="me-2" /> Gestionar Usuarios
+                      <Users size={16} className="me-2" /> Control de Usuarios
                     </NavDropdown.Item>
                     <NavDropdown.Item as={NavLink} to="/admin/reportes">
-                      <Settings size={16} className="me-2" /> Reportes de Ventas
+                      <Settings size={16} className="me-2" /> Reportes Globales
                     </NavDropdown.Item>
                   </>
                 )}
