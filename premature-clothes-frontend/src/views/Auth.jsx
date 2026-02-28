@@ -13,7 +13,7 @@ const Auth = ({ inicialEsLogin }) => {
     email: '',
     password: '',
     direccion_envio: '',
-    rol: 'comprador' // Por defecto
+    rol: 'comprador' 
   });
 
   const handleChange = (e) => {
@@ -23,11 +23,10 @@ const Auth = ({ inicialEsLogin }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // 🔍 QA FIX: Construcción robusta de la URL
-    const endpoint = esLogin ? '/usuarios/login' : '/usuarios/register';
+    // 🔍 QA FIX: Alineación con el prefijo /api definido en index.js
+    const endpoint = esLogin ? '/api/usuarios/login' : '/api/usuarios/register';
     const urlBase = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     
-    // Limpiamos barras para evitar "https://api.com//usuarios/register"
     const urlFinal = `${urlBase.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`;
 
     const payload = esLogin
@@ -46,7 +45,7 @@ const Auth = ({ inicialEsLogin }) => {
       const data = await response.json();
 
       if (response.ok) {
-        // Manejo flexible del token según cómo responda tu API
+        // QA Mindset: El token puede venir en data.token o data.usuario.token
         const tokenEncontrado = data.token || (data.usuario && data.usuario.token);
 
         const usuarioParaGuardar = {
@@ -56,22 +55,22 @@ const Auth = ({ inicialEsLogin }) => {
 
         setUser(usuarioParaGuardar);
         localStorage.setItem('user', JSON.stringify(usuarioParaGuardar));
+        localStorage.setItem('token', tokenEncontrado); // Guardamos token por separado para facilitar fetchs
 
         alert('¡Bienvenido! ✨');
         
-        // Redirección basada en Rol
-        if (usuarioParaGuardar.rol === 'admin') {
+        // 🔍 QA FIX: Coherencia con el ENUM de la base de datos ('administrador')
+        if (usuarioParaGuardar.rol === 'administrador') {
           navigate('/admin/pedidos');
         } else {
           navigate('/catalogo');
         }
       } else {
-        // Muestra el mensaje de error que viene del backend (Render)
         alert(`Error: ${data.msg || data.error || 'Verifica tus datos'}`);
       }
     } catch (error) {
       console.error("❌ Error de conexión:", error);
-      alert("No se pudo conectar con el servidor. Revisa tu conexión.");
+      alert("No se pudo conectar con el servidor. Asegúrate de que el Backend esté encendido.");
     }
   };
 
@@ -96,7 +95,7 @@ const Auth = ({ inicialEsLogin }) => {
                     <Form.Label className="small fw-bold">Nombre Completo</Form.Label>
                     <Form.Control 
                       name="nombre_completo" 
-                      placeholder="Ej: Juan Pérez"
+                      placeholder="Ej: Fabián Marcelo"
                       onChange={handleChange} 
                       required 
                     />
