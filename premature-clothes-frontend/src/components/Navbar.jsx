@@ -125,7 +125,7 @@ const Navigation = () => {
                       <Users size={16} className="me-2" /> Control de Usuarios
                     </NavDropdown.Item>
                     <NavDropdown.Item as={NavLink} to="/admin/reportes">
-                      <Settings size={16} className="me-2" /> Reportes Globales
+                      <Settings size={16} className="me-2" /> Reportes de Ventas
                     </NavDropdown.Item>
                   </>
                 )}

@@ -3,11 +3,14 @@ const router = express.Router();
 const { pool } = require('../db');
 const authMiddleware = require('../middlewares/authMiddleware');
 
-// 1. Obtener todos los pedidos (Solo para Admin)
-router.get('/admin', authMiddleware, async (req, res) => {
+// 1. Obtener todos los pedidos (Consolidado para Reportes y Gestión)
+// QA FIX: Cambiamos '/' para que coincida con el fetch del Frontend
+router.get('/', authMiddleware, async (req, res) => {
     try {
-        // QA Debug: Veamos qué rol tiene tu usuario realmente
-        console.log("Datos del usuario en el token:", req.user);
+        // 🛡️ Seguridad QA: Solo 'administrador' puede ver reportes globales
+        if (req.user.rol !== 'administrador') {
+            return res.status(403).json({ error: "Acceso denegado. Se requieren permisos de administrador." });
+        }
 
         const query = `
             SELECT p.id, p.fecha, u.nombre_completo AS cliente, p.total, p.estado 
@@ -23,13 +26,12 @@ router.get('/admin', authMiddleware, async (req, res) => {
     }
 });
 
-// 2. Crear un nuevo pedido (Checkout Simplificado)
+// 2. Crear un nuevo pedido (Checkout)
 router.post('/checkout', authMiddleware, async (req, res) => {
     try {
         const { total } = req.body;
         const usuario_id = req.user.id;
 
-        // Ahora el INSERT es limpio y directo
         const query = `
             INSERT INTO pedidos (usuario_id, total, estado) 
             VALUES ($1, $2, 'pendiente') 
@@ -49,4 +51,5 @@ router.post('/checkout', authMiddleware, async (req, res) => {
         return res.status(500).json({ error: "Error al procesar pedido" });
     }
 });
+
 module.exports = router;
