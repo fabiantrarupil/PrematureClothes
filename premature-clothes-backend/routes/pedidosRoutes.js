@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/authMiddleware');
 
 // 1. Obtener todos los pedidos (Consolidado para Reportes y Gestión)
 // QA FIX: Cambiamos '/' para que coincida con el fetch del Frontend
-router.get('/', authMiddleware, async (req, res) => {
+router.get('/admin', authMiddleware, async (req, res) => {
     try {
         // 🛡️ Seguridad QA: Solo 'administrador' puede ver reportes globales
         if (req.user.rol !== 'administrador') {
