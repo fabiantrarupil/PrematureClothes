@@ -61,7 +61,7 @@ const DetalleProducto = () => {
         <Col md={6}>
           <div className="rounded-4 overflow-hidden shadow-sm border bg-white d-flex align-items-center justify-content-center" style={{ minHeight: '400px' }}>
             <img
-              src={producto.imagen_url || producto.img || 'https://placehold.co/400'}
+              src={producto.imagen || producto.img || 'https://placehold.co/400'}
               alt={producto.nombre || producto.titulo}
               className="img-fluid"
               style={{ maxHeight: '500px', objectFit: 'contain', padding: '20px' }}

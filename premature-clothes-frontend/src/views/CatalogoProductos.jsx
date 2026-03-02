@@ -24,7 +24,7 @@ const CatalogoProductos = () => {
                 {/* 1. Ajustado a 'imagen_url' de tu DB */}
                 <Card.Img 
                   variant="top" 
-                  src={producto.imagen_url || 'https://via.placeholder.com/200'} 
+                  src={producto.imagen || 'https://via.placeholder.com/200'} 
                   style={{ height: '200px', objectFit: 'contain', padding: '10px' }} 
                 />
                 

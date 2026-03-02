@@ -54,7 +54,7 @@ const Favoritos = () => {
                   >
                     <Card.Img
                       variant="top"
-                      src={prod.imagen_url || 'https://placehold.co/400'}
+                      src={prod.imagen || 'https://placehold.co/400'}
                       style={{ height: '220px', objectFit: 'contain', padding: '20px' }}
                     />
                   </div>

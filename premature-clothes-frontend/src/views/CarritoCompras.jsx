@@ -115,7 +115,7 @@ const CarritoCompras = () => {
                       <td className="px-4 py-3">
                         <div className="d-flex align-items-center">
                           <img
-                            src={item.imagen_url || item.img || 'https://placehold.co/60'}
+                            src={item.imagen || item.img || 'https://placehold.co/60'}
                             alt={item.nombre}
                             style={{ width: '60px', height: '60px', objectFit: 'contain' }}
                             className="me-3 rounded border bg-light"

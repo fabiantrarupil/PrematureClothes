@@ -51,7 +51,7 @@ const MisPublicaciones = () => {
                   <td>
                     <img
                       // Priorizamos url_imagen que es el estándar de base de datos
-                      src={item.imagen_url || item.img || 'https://placehold.co/40'}
+                      src={item.imagen || item.img || 'https://placehold.co/40'}
                       alt={item.titulo}
                       style={{ width: '40px', height: '40px', objectFit: 'cover' }}
                       className="rounded bg-light"

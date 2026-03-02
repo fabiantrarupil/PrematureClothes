@@ -15,7 +15,7 @@ const PublicarProducto = () => {
   const [nuevoProducto, setNuevoProducto] = useState({
     titulo: '',
     precio: '',
-    imagen_url: '',
+    imagen: '',
     descripcion: '',
     talla_rango: '000', // Valor por defecto para prematuros
     estado_prenda: 'usado'
@@ -36,7 +36,7 @@ const PublicarProducto = () => {
       descripcion: nuevoProducto.descripcion,
       precio: Number(nuevoProducto.precio),
       stock: 1,
-      imagen_url: nuevoProducto.imagen_url,
+      imagen: nuevoProducto.imagen,
       talla_rango: nuevoProducto.talla_rango,
       estado_prenda: nuevoProducto.estado_prenda
     };
@@ -124,7 +124,7 @@ const PublicarProducto = () => {
               <Form.Group className="mb-3">
                 <Form.Label className="small fw-bold"><Camera size={16} className="me-2" />URL de la Imagen</Form.Label>
                 <Form.Control
-                  name="imagen_url"
+                  name="imagen"
                   placeholder="https://link-de-la-foto.jpg"
                   onChange={handleChange}
                   required
