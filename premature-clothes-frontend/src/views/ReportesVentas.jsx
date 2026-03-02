@@ -3,6 +3,8 @@ import { Container, Row, Col, Card, Table, Spinner, Alert, Badge } from 'react-b
 import { ProductContext } from '../context/ProductContext';
 import { Navigate } from 'react-router-dom';
 import { TrendingUp, ShoppingBag, Users, Calendar } from 'lucide-react';
+// Asegúrate de que el nombre del archivo coincida exactamente (PedidosService vs pedidosServices)
+import { getPedidosAdmin } from '../services/PedidosService'; 
 
 const ReportesVentas = () => {
   const { user } = useContext(ProductContext);
@@ -23,16 +25,10 @@ const ReportesVentas = () => {
       setLoading(true);
       const token = user?.token || localStorage.getItem('token');
       
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos`, {
-        headers: { 
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      // QA FIX: Usamos el servicio que ya apunta a /api/pedidos/admin
+      const pedidos = await getPedidosAdmin(token);
 
-      if (!response.ok) throw new Error('No se pudieron cargar los pedidos');
-      const pedidos = await response.json();
-
+      // Mantenemos la lógica de procesamiento de datos intacta
       const totalVentas = pedidos.reduce((acc, p) => acc + Number(p.total || 0), 0);
       const pedidosNuevos = pedidos.filter(p => p.estado === 'pendiente' || p.estado === 'pagado').length;
       const clientesUnicos = new Set(pedidos.map(p => p.usuario_id)).size;
@@ -46,6 +42,7 @@ const ReportesVentas = () => {
         transacciones: pedidos.slice(0, 10)
       });
     } catch (err) {
+      // Capturamos el error del servicio para mostrarlo en el Alert
       setError(err.message);
     } finally {
       setLoading(false);
@@ -72,7 +69,7 @@ const ReportesVentas = () => {
         <p className="text-muted">Análisis de rendimiento basado en transacciones reales.</p>
       </div>
       
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && <Alert variant="danger">Error: {error}</Alert>}
 
       <Row className="mb-4">
         {reportes.estadisticas.map((item, index) => (
