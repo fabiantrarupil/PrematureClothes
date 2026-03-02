@@ -3,7 +3,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 // 1. Obtener todos los productos (Catálogo)
 export const getProductos = async () => {
   try {
-    const response = await fetch(`${API_URL}/productos`);
+    // Agregamos /api antes de /productos
+    const response = await fetch(`${API_URL}/api/productos`); 
     if (!response.ok) throw new Error("Error al obtener el catálogo");
     return await response.json();
   } catch (error) {
@@ -12,10 +13,9 @@ export const getProductos = async () => {
   }
 };
 
-// 2. Obtener un producto por ID (Vista de Detalle)
 export const getProductoById = async (id) => {
   try {
-    const response = await fetch(`${API_URL}/productos/${id}`);
+    const response = await fetch(`${API_URL}/api/productos/${id}`);
     if (!response.ok) throw new Error("Producto no encontrado");
     return await response.json();
   } catch (error) {
