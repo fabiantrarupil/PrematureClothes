@@ -1,74 +1,72 @@
 import { useContext, useState } from 'react';
 import { Container, Table, Button, Row, Col, Card, Spinner } from 'react-bootstrap';
 import { ProductContext } from '../context/ProductContext';
+import { UserContext } from '../context/UserContext'; // 🛡️ Importación vital
 import { Trash2, Plus, Minus, ShoppingBag, ArrowLeft, CreditCard } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const CarritoCompras = () => {
-  const context = useContext(ProductContext);
+  // Consumimos ambos contextos para tener datos de productos y de sesión
+  const { carrito = [], totalCarrito = 0, eliminarDelCarrito, ajustarCantidad, limpiarCarrito } = useContext(ProductContext);
+  const { token, user } = useContext(UserContext); // Sacamos el token real del UserContext
+  
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
-  const {
-    carrito = [],
-    totalCarrito = 0,
-    eliminarDelCarrito = () => { },
-    ajustarCantidad,
-    user,
-    limpiarCarrito
-  } = context;
-
-  /**
-   * 🛡️ Lógica de Autenticación Multiusuario:
-   * Intentamos obtener el token del contexto (user.token) 
-   * o del localStorage como respaldo (fallback).
-   */
-  const token = user?.token || localStorage.getItem('token');
-  const userRole = user?.rol || localStorage.getItem('userRole');
+  // Definimos el rol para mostrar en la UI (fallback al localStorage por seguridad de persistencia)
+  const userRole = user?.rol || localStorage.getItem('userRole') || 'Invitado';
 
   const handlePagar = async () => {
-    // Verificación de seguridad previa
+    // 🔍 Verificación de QA: ¿Hay sesión activa?
     if (!token) {
-      alert("Debes iniciar sesión para realizar la compra. Redirigiendo...");
+      alert("Tu sesión ha expirado o no has iniciado sesión. Redirigiendo al ingreso...");
       navigate('/login');
       return;
     }
 
     setLoading(true);
     try {
-      console.log(`Iniciando compra para usuario con rol: ${userRole}`);
-
+      // Enviamos el total y los items para que el backend pueda procesar el pedido
       const response = await fetch(`${import.meta.env.VITE_API_URL}/api/pedidos/checkout`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          'Authorization': `Bearer ${token}` // 🔑 LA LLAVE que resuelve el error 401
         },
-        body: JSON.stringify({ total: totalCarrito })
+        body: JSON.stringify({ 
+          total: totalCarrito,
+          productos: carrito // Enviamos los productos para el detalle del pedido
+        })
       });
 
       if (response.ok) {
-        alert("¡Compra realizada con éxito! 👶👕 El pedido ha sido registrado.");
+        alert("¡Compra realizada con éxito! 👶👕 El pedido de PrematureClothes ha sido registrado.");
 
-        // Limpiamos el estado global del carrito
         if (limpiarCarrito) {
           limpiarCarrito();
         }
 
-        // Redirigimos al catálogo o vista de pedidos según corresponda
-        navigate('/catalogo');
+        // Redirigimos a la vista de Mis Pedidos que estamos construyendo
+        navigate('/mis-pedidos'); 
       } else {
         const errorData = await response.json();
-        alert(`Error: ${errorData.detalle || "No se pudo procesar el pedido"}`);
+        // Si el error es 401, informamos que la sesión no es válida
+        if (response.status === 401) {
+          alert("Error de autenticación. Por favor, vuelve a iniciar sesión.");
+          navigate('/login');
+        } else {
+          alert(`Error: ${errorData.detalle || "No se pudo procesar el pedido"}`);
+        }
       }
     } catch (error) {
       console.error("Error en la compra:", error);
-      alert("Hubo un error de conexión con el servidor. Revisa tu terminal.");
+      alert("Hubo un error de conexión con el servidor. Por favor, intenta más tarde.");
     } finally {
       setLoading(false);
     }
   };
 
+  // UI para carrito vacío
   if (carrito.length === 0) {
     return (
       <Container className="text-center py-5 mt-5">
@@ -92,7 +90,7 @@ const CarritoCompras = () => {
         <Button variant="link" onClick={() => navigate(-1)} className="text-muted p-0 me-3">
           <ArrowLeft size={20} />
         </Button>
-        <h2 className="fw-bold m-0">Mi Carrito ({userRole || 'Usuario'})</h2>
+        <h2 className="fw-bold m-0">Mi Carrito</h2>
       </div>
 
       <Row className="gy-4">
@@ -197,7 +195,7 @@ const CarritoCompras = () => {
               )}
             </Button>
             <p className="text-center text-muted small mt-3">
-              Rol: <strong>{userRole}</strong>. El pedido quedará registrado para gestión inmediata.
+              Identificado como: <strong>{user?.email || 'Usuario'}</strong>
             </p>
           </Card>
         </Col>
