@@ -42,7 +42,7 @@ const PublicarProducto = () => {
     };
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/productos`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/productos`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

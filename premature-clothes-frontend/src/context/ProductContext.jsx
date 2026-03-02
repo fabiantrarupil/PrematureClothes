@@ -1,5 +1,5 @@
 import { createContext, useState, useEffect } from "react";
-import { getProductos, toggleFavoritoDB } from "../services/ProductService";
+import { getProductos, toggleFavoritoDB } from "../services/ProductServices";
 
 export const ProductContext = createContext();
 

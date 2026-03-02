@@ -4,7 +4,7 @@ import { ProductContext } from '../context/ProductContext';
 import { Navigate } from 'react-router-dom';
 import { TrendingUp, ShoppingBag, Users, Calendar } from 'lucide-react';
 // Asegúrate de que el nombre del archivo coincida exactamente (PedidosService vs pedidosServices)
-import { getPedidosAdmin } from '../services/PedidosService'; 
+import { getPedidosAdmin } from '../services/PedidosServices'; 
 
 const ReportesVentas = () => {
   const { user } = useContext(ProductContext);

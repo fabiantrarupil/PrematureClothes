@@ -27,7 +27,7 @@ export const getProductoById = async (id) => {
 // 3. Crear un nuevo producto (Publicar)
 export const crearProducto = async (nuevoProducto) => {
   try {
-    const response = await fetch(`${API_URL}/productos`, {
+    const response = await fetch(`${API_URL}/api/productos`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(nuevoProducto)
